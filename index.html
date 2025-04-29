@@ -60,6 +60,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
+// Word Game Logic with Corrected Mic
 const dictionary = [
   "ability", "absence", "academy", "account", "accused", "achieve", "acquire", "address", "advance", "adverse",
   "advised", "adviser", "against", "airline", "airport", "alleged", "already", "amateur", "amazing", "analyst"
@@ -74,6 +75,7 @@ let timerInterval;
 let mode = "mic";
 let usedWords = new Set();
 
+// Elements
 const startBtn = document.getElementById('startBtn');
 const micModeBtn = document.getElementById('micModeBtn');
 const typeModeBtn = document.getElementById('typeModeBtn');
@@ -202,11 +204,7 @@ function startRecognition() {
   recognition.continuous = true;
 
   recognition.onresult = (e) => {
-    const transcript = Array.from(e.results)
-      .map(result => result[0])
-      .map(result => result.transcript)
-      .join('')
-      .trim();
+    const transcript = e.results[e.results.length - 1][0].transcript.trim();
     if (transcript) {
       logMessage(`Heard: ${transcript}`);
       validateWord(transcript);
