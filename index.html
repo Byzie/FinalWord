@@ -1,310 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Word Mic Challenge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Press Start 2P', cursive; background: linear-gradient(135deg, #e0f7fa, #fff3e0); text-align: center; padding: 20px; margin: 0; color: #333; overflow-x: hidden; overflow-y: hidden;}
-    .mode-buttons button, #startBtn, #submitBtn, #toggleDarkModeBtn {
-      margin: 10px; padding: 12px 20px; background: #00796b; color: white; border: none; border-radius: 5px; font-size: 1em; cursor: pointer;
-    }
-    #timer { font-size: 1.5em; margin: 20px 0; position: relative; }
-    #bonusAnimation { position: absolute; top: -30px; width: 100%; color: #4CAF50; animation: floatUp 1.5s forwards; display: none; }
-    @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-30px); } }
-    .target-word { font-size: 2em; margin-bottom: 20px; }
-    .letter { padding: 10px; margin: 5px; font-size: 1.8em; display: inline-block; border-radius: 8px; background: #ffffff; box-shadow: 0 0 5px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-    .letter.active { background: #4CAF50; color: white; box-shadow: 0 0 10px #4CAF50; transform: scale(1.2); }
-    #inputArea { margin-top: 20px; }
-    #log, #usedWordsList { background: white; padding: 10px; border-radius: 8px; margin: 10px auto; width: 80%; max-width: 400px; overflow-y: auto; height: 150px; text-align: left; }
-    #scoreBoard { margin-top: 20px; font-size: 1.5em; }
-    .dark-mode { background: #222; color: #eee; }
-    .dark-mode .letter { background: #555; color: #eee; }
-    .dark-mode .letter.active { background: #00e676; color: black; box-shadow: 0 0 10px #00e676; }
-    .dark-mode #log, .dark-mode #usedWordsList { background: #333; }
-    /* Insert Coin Screen */
-    #insertCoinScreen {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      color: #00FF00;
-      font-size: 24px;
-      animation: flicker 1s infinite;
-      flex-direction: column;
-    }
-    @keyframes flicker {
-      0%, 18%, 22%, 25%, 53%, 57%, 100% {
-        opacity: 1;
-      }
-      20%, 24%, 55% {
-        opacity: 0;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Mic Challenge</title>
+<style>
+body { font-family: 'Press Start 2P', cursive; background: linear-gradient(135deg,#e0f7fa,#fff3e0); text-align: center; margin: 0; overflow-x: hidden; }
+.target-word { font-size: 6vw; white-space: nowrap; overflow-x: auto; }
+.letter { padding: 10px; margin: 5px; display: inline-block; border-radius: 8px; background: #fff; }
+.letter.active { background: #4CAF50; color: white; transform: scale(1.2); }
+#insertCoinScreen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: black; color: #00FF00; font-size: 24px; display: flex; justify-content: center; align-items: center; flex-direction: column; animation: flicker 1s infinite; }
+@keyframes flicker { 0%,18%,22%,25%,53%,57%,100%{opacity:1;}20%,24%,55%{opacity:0;} }
+</style>
 </head>
 <body>
 
-<div id="insertCoinScreen">
-  INSERT COIN<br/><small>(Tap anywhere)</small>
-</div>
+<div id="insertCoinScreen">INSERT COIN<br><small>(Tap anywhere)</small></div>
+<audio id="beepSound" src="https://freesound.org/data/previews/178/178186_3248244-lq.mp3" preload="auto"></audio>
 
 <div id="gameContent" style="display:none;">
-  <h1>Word Mic Challenge</h1>
-
-  <div class="mode-buttons" id="modeButtons">
-    <button id="micModeBtn">🎤 Speak</button>
-    <button id="typeModeBtn">⌨️ Type</button>
-  </div>
-
-  <button id="startBtn" style="display:none;">Start Game</button>
-  <button id="toggleDarkModeBtn">🌓 Toggle Dark Mode</button>
-
-  <div id="timer">
-    <span id="timeDisplay"></span>
-    <div id="bonusAnimation">+1.5s!</div>
-  </div>
-
-  <div id="target" class="target-word"></div>
-
-  <div id="inputArea" style="display:none;">
-    <input type="text" id="typedInput" placeholder="Type your word here">
-    <button id="submitBtn">Submit</button>
-  </div>
-
-  <div id="log"></div>
-  <div id="usedWordsList"><strong>Used Words:</strong><ul id="usedWordsUl"></ul></div>
-  <div id="scoreBoard"></div>
-
-  <audio id="successSound" src="https://freesound.org/data/previews/269/269718_5123851-lq.mp3" preload="auto"></audio>
-  <audio id="errorSound" src="https://freesound.org/data/previews/331/331912_3248244-lq.mp3" preload="auto"></audio>
-  <audio id="bonusSound" src="https://freesound.org/data/previews/174/174027_3248244-lq.mp3" preload="auto"></audio>
+<h1>Word Mic Challenge</h1>
+<div id="modeButtons"><button id="micModeBtn">🎤 Speak</button><button id="typeModeBtn">⌨️ Type</button></div>
+<button id="startBtn" style="display:none;">Start Game</button>
+<button id="toggleDarkModeBtn">🌓 Toggle Dark Mode</button>
+<div id="timer"><span id="timeDisplay"></span></div>
+<div id="target" class="target-word"></div>
+<div id="inputArea" style="display:none;"><input type="text" id="typedInput"><button id="submitBtn">Submit</button></div>
+<div id="log"></div><div id="usedWordsList"><ul id="usedWordsUl"></ul></div><div id="scoreBoard"></div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded',function(){
+const insertCoin=document.getElementById('insertCoinScreen');
+const gameContent=document.getElementById('gameContent');
+const beepSound=document.getElementById('beepSound');
+insertCoin.addEventListener('click',()=>{beepSound.play();insertCoin.style.display='none';gameContent.style.display='block';document.body.style.overflowY="auto";});
 
-const insertCoin = document.getElementById('insertCoinScreen');
-const gameContent = document.getElementById('gameContent');
-insertCoin.addEventListener('click', () => {
-  insertCoin.style.display = 'none';
-  gameContent.style.display = 'block';
-  document.body.style.overflowY = "auto";
-});
+const dictionary=["ability","absence","academy","account","accused","achieve","acquire","address","advance","adverse","advised","adviser","against","airline","airport","alleged","already","amateur","amazing","analyst","banana","benefit","between","bicycle","biology","brother","cabinet","caliber","capital","capture","carbon","careful","carrier","central","century","ceramic","zealous","yesterday","xylophone","wonderful"];
+let targetWord="",currentIndex=0,score=0,timeLeft=35,recognition,timerInterval,mode="mic",usedWords=new Set();
 
-// Word Game Logic (original mic behavior, fast start)
-
-const dictionary = [
-  "ability", "absence", "academy", "account", "accused", "achieve", "acquire", "address", "advance", "adverse",
-  "advised", "adviser", "against", "airline", "airport", "alleged", "already", "amateur", "amazing", "analyst"
-];
-
-let targetWord = "";
-let currentIndex = 0;
-let score = 0;
-let timeLeft = 35;
-let recognition;
-let timerInterval;
-let mode = "mic";
-let usedWords = new Set();
-
-const startBtn = document.getElementById('startBtn');
-const micModeBtn = document.getElementById('micModeBtn');
-const typeModeBtn = document.getElementById('typeModeBtn');
-const toggleDarkModeBtn = document.getElementById('toggleDarkModeBtn');
-const modeButtons = document.getElementById('modeButtons');
-const targetDiv = document.getElementById('target');
-const timerDisplay = document.getElementById('timeDisplay');
-const bonusDiv = document.getElementById('bonusAnimation');
-const logDiv = document.getElementById('log');
-const scoreBoard = document.getElementById('scoreBoard');
-const inputArea = document.getElementById('inputArea');
-const typedInput = document.getElementById('typedInput');
-const submitBtn = document.getElementById('submitBtn');
-const usedWordsUl = document.getElementById('usedWordsUl');
-const successSound = document.getElementById('successSound');
-const errorSound = document.getElementById('errorSound');
-const bonusSound = document.getElementById('bonusSound');
-
-toggleDarkModeBtn.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-});
-
-function randomWord(length = 7) {
-  const words = dictionary.filter(w => w.length === length);
-  return words[Math.floor(Math.random() * words.length)] || "awesome";
-}
-
-function displayTargetWord() {
-  targetDiv.innerHTML = "";
-  for (let i = 0; i < targetWord.length; i++) {
-    const span = document.createElement('span');
-    span.textContent = targetWord[i].toUpperCase();
-    span.className = 'letter';
-    if (i === currentIndex) span.classList.add('active');
-    targetDiv.appendChild(span);
-  }
-}
-
-function updateTimer() {
-  timerDisplay.textContent = `${timeLeft.toFixed(1)}s`;
-}
-
-function logMessage(message) {
-  const p = document.createElement('p');
-  p.textContent = message;
-  logDiv.appendChild(p);
-  logDiv.scrollTop = logDiv.scrollHeight;
-}
-
-function showBonusAnimation() {
-  bonusDiv.style.display = 'block';
-  bonusDiv.style.animation = 'none';
-  void bonusDiv.offsetWidth;
-  bonusDiv.style.animation = 'floatUp 1.5s forwards';
-  setTimeout(() => {
-    bonusDiv.style.display = 'none';
-  }, 1500);
-}
-
-function updateUsedWords(word) {
-  const li = document.createElement('li');
-  li.textContent = word;
-  usedWordsUl.appendChild(li);
-}
-
-function startTimer() {
-  timerInterval = setInterval(() => {
-    timeLeft -= 0.1;
-    updateTimer();
-    if (timeLeft <= 0) endGame();
-  }, 100);
-}
-
-function endGame() {
-  clearInterval(timerInterval);
-  if (recognition) recognition.stop();
-  timerDisplay.textContent = "Time's up!";
-  scoreBoard.textContent = `Final Score: ${score} points`;
-  startBtn.style.display = "none";
-  modeButtons.style.display = "block";
-  inputArea.style.display = "none";
-}
-
-function nextLetter() {
-  currentIndex++;
-  if (currentIndex >= targetWord.length) {
-    targetWord = randomWord();
-    currentIndex = 0;
-    logMessage("New word generated!");
-  }
-  displayTargetWord();
-}
-
-function validateWord(spokenWord) {
-  const word = spokenWord.toLowerCase();
-  const currentLetter = targetWord[currentIndex].toLowerCase();
-  if (usedWords.has(word)) {
-    errorSound.play();
-    logMessage(`Word already used: ${spokenWord}`);
-    return;
-  }
-  if (word && word[0] === currentLetter) {
-    usedWords.add(word);
-    updateUsedWords(word);
-    let points = word.length;
-    score += points;
-    successSound.play();
-    if (word.length >= 10) {
-      timeLeft += 1.5;
-      showBonusAnimation();
-      bonusSound.play();
-    }
-    logMessage(`Correct! ${spokenWord} (+${points} pts)`);
-    nextLetter();
-  } else {
-    errorSound.play();
-    logMessage(`Wrong letter for: ${spokenWord}`);
-  }
-}
-
-function startRecognition() {
-  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.continuous = false;
-
-  recognition.onresult = (e) => {
-    const spoken = e.results[0][0].transcript.trim();
-    logMessage(`Heard: ${spoken}`);
-    validateWord(spoken);
-  };
-
-  recognition.onerror = (e) => {
-    logMessage(`Mic error: ${e.error}`);
-  };
-
-  recognition.onend = () => {
-    if (timeLeft > 0) recognition.start();
-  };
-
-  recognition.start();
-}
-
-startBtn.addEventListener('click', () => {
-  score = 0;
-  timeLeft = 35;
-  usedWords.clear();
-  usedWordsUl.innerHTML = "";
-  logDiv.innerHTML = "";
-  scoreBoard.textContent = "";
-  targetWord = randomWord();
-  currentIndex = 0;
-  displayTargetWord();
-  updateTimer();
-  startTimer();
-
-  if (mode === "mic") {
-    startRecognition();
-    inputArea.style.display = "none";
-  } else {
-    inputArea.style.display = "block";
-    typedInput.focus();
-  }
-
-  startBtn.style.display = "none";
-  modeButtons.style.display = "none";
-});
-
-micModeBtn.addEventListener('click', () => {
-  mode = "mic";
-  startBtn.style.display = "inline-block";
-});
-
-typeModeBtn.addEventListener('click', () => {
-  mode = "type";
-  startBtn.style.display = "inline-block";
-});
-
-submitBtn.addEventListener('click', () => {
-  const typedWord = typedInput.value.trim();
-  if (typedWord) {
-    validateWord(typedWord);
-    typedInput.value = "";
-  }
-});
-
-typedInput.addEventListener('keypress', (e) => {
-  if (e.key === "Enter") submitBtn.click();
-});
-
+function randomWord(length=7){const words=dictionary.filter(w=>w.length===length);return words[Math.floor(Math.random()*words.length)]||"awesome";}
+function displayTargetWord(){const targetDiv=document.getElementById('target');targetDiv.innerHTML="";for(let i=0;i<targetWord.length;i++){const span=document.createElement('span');span.textContent=targetWord[i].toUpperCase();span.className='letter';if(i===currentIndex)span.classList.add('active');targetDiv.appendChild(span);}}
+function validateWord(word){word=word.toLowerCase();const currentLetter=targetWord[currentIndex].toLowerCase();if(usedWords.has(word))return; if(word[0]===currentLetter && dictionary.includes(word)){usedWords.add(word);nextLetter();}}
+function nextLetter(){currentIndex++;if(currentIndex>=targetWord.length){targetWord=randomWord();currentIndex=0;}displayTargetWord();}
+function startRecognition(){window.SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new SpeechRecognition();recognition.lang='en-US';recognition.interimResults=false;recognition.continuous=false;
+recognition.onresult=(e)=>{const spoken=e.results[0][0].transcript.trim();validateWord(spoken);};recognition.onerror=(e)=>{};recognition.onend=()=>{if(timeLeft>0)recognition.start();};recognition.start();}
+document.getElementById('startBtn').addEventListener('click',()=>{score=0;timeLeft=35;usedWords.clear();targetWord=randomWord();currentIndex=0;displayTargetWord();if(mode==="mic")startRecognition();});
+document.getElementById('micModeBtn').addEventListener('click',()=>{mode="mic";document.getElementById('startBtn').style.display="inline-block";});
+document.getElementById('typeModeBtn').addEventListener('click',()=>{mode="type";document.getElementById('startBtn').style.display="inline-block";});
 });
 </script>
-
 </body>
 </html>
