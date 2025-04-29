@@ -37,7 +37,26 @@
       0% { opacity: 1; transform: translateY(0); }
       100% { opacity: 0; transform: translateY(-30px); }
     }
-    .target-word { font-size: 2em; margin-bottom: 20px; }
+    .target-word { 
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .letter {
+      padding: 10px;
+      margin: 5px;
+      font-size: 1.8em;
+      display: inline-block;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .letter.active {
+      background: #4CAF50;
+      color: white;
+      box-shadow: 0 0 10px #4CAF50;
+      transform: scale(1.2);
+    }
     #inputArea { margin-top: 20px; }
     #log, #usedWordsList {
       background: white;
@@ -52,6 +71,8 @@
     }
     #scoreBoard { margin-top: 20px; font-size: 1.5em; }
     .dark-mode { background: #222; color: #eee; }
+    .dark-mode .letter { background: #555; color: #eee; }
+    .dark-mode .letter.active { background: #00e676; color: black; box-shadow: 0 0 10px #00e676; }
     .dark-mode #log, .dark-mode #usedWordsList { background: #333; }
   </style>
 </head>
@@ -139,7 +160,9 @@ function displayTargetWord() {
     const span = document.createElement('span');
     span.textContent = targetWord[i].toUpperCase();
     span.className = 'letter';
-    if (i === currentIndex) span.classList.add('active');
+    if (i === currentIndex) {
+      span.classList.add('active');  // Highlight the active letter
+    }
     targetDiv.appendChild(span);
   }
 }
